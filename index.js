@@ -38,6 +38,7 @@ program
   .option('--not', 'folder or file names to skip', {
     validator: program.ARRAY
   })
+  .option('--verbose', 'verbose output')
   .action(({ logger, args, options }) => {
     const configFilePath = path.resolve(process.cwd(), '.escheckrc')
 
@@ -63,6 +64,7 @@ program
       options.not && options.not.length
         ? options.not
         : [].concat(config.not || [])
+    const verbose = options.verbose ? options.verbose : config.verbose
 
     if (!expectedEcmaVersion) {
       logger.error(
@@ -143,7 +145,7 @@ program
 
     const errArray = []
     const globOpts = { nodir: true }
-    const acornOpts = { ecmaVersion: parseInt(ecmaVersion, 10), silent: true }
+    const acornOpts = { ecmaVersion: parseInt(ecmaVersion, 10), silent: !verbose }
 
     const expandedPathsToIgnore = pathsToIgnore.reduce((result, path) => {
       if (path.includes('*')) {
